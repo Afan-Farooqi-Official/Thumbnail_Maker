@@ -4,6 +4,7 @@ from config import OPENAI_API_KEY
 
 client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
+# this is a function that uses the OpenAI Response API to generate a thumbnail image based on a prompt, style prompt, and a headshot URL. It constructs a full prompt that emphasizes the importance of keeping the likeness of the person in the headshot accurate. The function then calls the OpenAI API with the specified model and tools for image generation, and returns the generated image as raw PNG bytes. If no image generation result is found in the response, it raises a RuntimeError.
 async def generate_thumbnail(prompt: str, style_prompt: str, headshot_url: str) -> bytes:
     """
     Use the Response API with gpt-image-2 as a built-in image_genertion tool. 
@@ -21,11 +22,13 @@ async def generate_thumbnail(prompt: str, style_prompt: str, headshot_url: str) 
     response = await client.responses.create(
         model="gpt-4o",
         input = [
-            "role": "user",
-            "content": [
-                {"type": "input_image", "url": headshot_url},
-                {"type": "text", "text": full_prompt},
-            ],
+            {
+                "role": "user",
+                "content": [
+                    {"type": "input_image", "url": headshot_url},
+                    {"type": "text", "text": full_prompt},
+                ],
+            }
         ],
         tools = [
             {
@@ -36,7 +39,6 @@ async def generate_thumbnail(prompt: str, style_prompt: str, headshot_url: str) 
                 "output_format": "png",
             }
         ]
-
     )
 
     # Extract the base64-encoded image data from the response
