@@ -150,7 +150,7 @@ async def stream_job(job_id: str):
                             "imagekit_url": t.imagekit_url,
                             "variants": variants
                         })
-                        yield f"event: thumbnial ready\ndata: {data}\n\n"
+                        yield f"event: thumbnial_ready\ndata: {data}\n\n"
                         sent_thumbnails.add(t.id)
 
                     elif t.status == "failed":
@@ -159,7 +159,7 @@ async def stream_job(job_id: str):
                             "style_name": t.style_name,
                             "error": t.error_message
                         })
-                        yield f"event: thumbnail failed\ndata: {data}\n\n"
+                        yield f"event: thumbnail_failed\ndata: {data}\n\n"
                         sent_thumbnails.add(t.id)
 
                 # If all thumbnails are either uploaded or failed, we can stop the stream
@@ -167,7 +167,7 @@ async def stream_job(job_id: str):
                 if all_done and len(sent_thumbnails) == len(thumbnails):
 
                     data = json.dumps({"job_id": job_id, "status": job.status})
-                    yield f"events job completed\n data: {data}"
+                    yield f"events job_completed\n data: {data}"
                     return
                 
             await asyncio.sleep(1.5)
